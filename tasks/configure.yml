@@ -28,12 +28,12 @@
     content: "{{ djbdns_data }}"
     dest: /etc/tinydns/root/data
     mode: "644"
+  notify: Compile zone file into a hashed database
 
 - name: Checking to see when the last xfer database was hashed
   ansible.builtin.stat:
     path: /etc/tinydns/root/data.cdb
   register: data_db
-  notify: Compile zone file into a hashed database
 
 - name: Checking to see when the last xfer config was modified
   ansible.builtin.stat:

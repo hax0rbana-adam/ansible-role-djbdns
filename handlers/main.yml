@@ -3,13 +3,13 @@
   ansible.builtin.command:
     cmd: make
     chdir: /etc/axfrdns
-  register: xfer_rebuid
-  changed_when: not xfer_rebuild.stdout | search("is up to date.")
+  register: xfer_rebuild
+  changed_when: '"is up to date." not in xfer_rebuild.stdout'
 
 - name: Compile zone file into a hashed database
   when: not data_db.stat.exists or data_conf.stat.mtime > data_db.stat.mtime
   ansible.builtin.command:
     cmd: make
     chdir: /etc/tinydns/root
-  register: data_rebuid
-  changed_when: not data_rebuild.stdout | search("is up to date.")
+  register: data_rebuild
+  changed_when: '"is up to date." not in data_rebuild.stdout'
