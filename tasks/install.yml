@@ -8,13 +8,14 @@
   ansible.builtin.get_url:
     url: "{{ djbdns_url }}"
     checksum: "{{ djbdns_checksum }}"
-    dest: djbdns-1.05.tar.gz
+    dest: ./djbdns-1.05.tar.gz
     mode: '644'
 
 - name: Decompressing source code
   ansible.builtin.unarchive:
-    src: djbdns-1.05.tar.gz
+    src: ./djbdns-1.05.tar.gz
     dest: .
+    remote_src: true
 
 - name: Preparing to compile
   ansible.builtin.copy:
@@ -39,7 +40,6 @@
 - name: Cleaning up source code files and directory
   ansible.builtin.file:
     path: "{{ item }}"
-    recurse: true
     state: absent
   loop: ["djbdns-1.05", "djbdns-1.05.tar.gz"]
 
