@@ -41,14 +41,14 @@
     path: "{{ item }}"
     recurse: true
     state: absent
-  with_items: ["djbdns-1.05", "djbdns-1.05.tar.gz"]
+  loop: ["djbdns-1.05", "djbdns-1.05.tar.gz"]
 
 - name: Adding users required to run djbdns
   ansible.builtin.user:
     name: "{{ item }}"
     create_home: false
     shell: "/bin/false"
-  with_items: ["tinydns", "dnslog", "axfrdns"]
+  loop: ["tinydns", "dnslog", "axfrdns"]
 
 # https://cr.yp.to/djbdns/tinydns-conf.html
 - name: Configuring tinydns component of djbdns
@@ -67,4 +67,4 @@
     regexp: '-d[0-9]*'
     replace: '-d600000'
     mode: "755"
-  with_items: ["/etc/axfrdns/run", "/etc/tinydns/run"]
+  loop: ["/etc/axfrdns/run", "/etc/tinydns/run"]
