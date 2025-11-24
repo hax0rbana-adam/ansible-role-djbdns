@@ -1,5 +1,5 @@
 - name: Compile zone transfer rules into a hashed database
-  when: xfer_conf.stat.mtime > xfer_db.stat.mtime
+  when: not xfer_db.stat.exists or xfer_conf.stat.mtime > xfer_db.stat.mtime
   ansible.builtin.command:
     cmd: make
     chdir: /etc/axfrdns
@@ -7,7 +7,7 @@
   changed_when: not xfer_rebuild.stdout | search("is up to date.")
 
 - name: Compile zone file into a hashed database
-  when: data_conf.stat.mtime > data_db.stat.mtime
+  when: not data_db.stat.exists or data_conf.stat.mtime > data_db.stat.mtime
   ansible.builtin.command:
     cmd: make
     chdir: /etc/tinydns/root
