@@ -1,0 +1,70 @@
+- name: Install dependencies to compile the software
+  ansible.builtin.package:
+    name:
+      - build-essential
+      - make
+
+- name: Download source code
+  ansible.builtin.get_url:
+    url: "{{ djbdns_url }}"
+    checksum: "{{ djbdns_checksum }}"
+    dest: djbdns-1.05.tar.gz
+    mode: '644'
+
+- name: Decompressing source code
+  ansible.builtin.unarchive:
+    src: djbdns-1.05.tar.gz
+    dest: .
+
+- name: Preparing to compile
+  ansible.builtin.copy:
+    content: >
+      gcc -O2 -include /usr/include/errno.h
+      -Wno-incompatible-pointer-types -Wno-implicit-function-declaration
+    dest: djbdns-1.05/conf-cc
+    mode: "600"
+
+- name: Compiling djbdns source code
+  ansible.builtin.command:
+    chdir: djbdns-1.05
+    cmd: make
+    creates: djbdns-1.05/tinydns
+
+- name: Installing executable in /usr/local
+  ansible.builtin.command:
+    chdir: djbdns-1.05
+    cmd: make setup check
+    creates: /usr/local/bin/tinydns
+
+- name: Cleaning up source code files and directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    recurse: true
+    state: absent
+  with_items: ["djbdns-1.05", "djbdns-1.05.tar.gz"]
+
+- name: Adding users required to run djbdns
+  ansible.builtin.user:
+    name: "{{ item }}"
+    create_home: false
+    shell: "/bin/false"
+  with_items: ["tinydns", "dnslog", "axfrdns"]
+
+# https://cr.yp.to/djbdns/tinydns-conf.html
+- name: Configuring tinydns component of djbdns
+  ansible.builtin.command:
+    cmd: tinydns-conf tinydns dnslog /etc/tinydns {{ djbdns_bind_ip_address }}
+    creates: /etc/tinydns/root/Makefile
+
+- name: Configuring axfrdns component of djbdns
+  ansible.builtin.command:
+    cmd: axfrdns-conf axfrdns dnslog /etc/axfrdns /etc/tinydns {{ djbdns_bind_ip_address }}
+    creates: /etc/axfrdns/root/Makefile
+
+- name: Setting memory limits to 600KB
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: '-d[0-9]*'
+    replace: '-d600000'
+    mode: "755"
+  with_items: ["/etc/axfrdns/run", "/etc/tinydns/run"]

@@ -1,0 +1,10 @@
+- name: Creating symlinks which will start the serviccse
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - src: /etc/tinydns
+      dest: /etc/service/tinydns
+    - src: /etc/axfrdns
+      dest: /etc/service/axfrdns

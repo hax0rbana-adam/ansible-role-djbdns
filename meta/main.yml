@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Adam
+  description: djbdns - a secure DNS server, written by djb
+  license: MIT
+  min_ansible_version: "2.7"
+  platforms:
+    - name: Debian
+      versions:
+        - trixie
+  galaxy_tags:
+    - debian
+    - dns
+    - djbdns
+    - tinydns
+  role_name: djbdns
+  namespace: hax0rbana_adam
+
+dependencies: []

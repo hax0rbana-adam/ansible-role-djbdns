@@ -1,0 +1,20 @@
+- name: Ensuring we have all the dependencies required to run the service
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/dependencies.yml"
+
+- name: Checking to see if djbdns is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/tinydns
+  register: executable
+
+- name: Compiling and installing djbdns (if necessary)
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  when: not executable.stat.exists
+
+- name: Configuring djbdns
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/configure.yml"
+
+- name: Starting the services
+  ansible.builtin.include_tasks: "{{ role_path }}/tasks/start.yml"
+
+# To see that the service is running, you can manually run
+# `svstat /etc/service/tinydns` on the server.

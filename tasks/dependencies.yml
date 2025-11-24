@@ -1,0 +1,6 @@
+- name: Install dependencies to run the service
+  ansible.builtin.package:
+    name:
+      - daemontools
+      - daemontools-run
+      - ucspi-tcp

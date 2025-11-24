@@ -1,0 +1,35 @@
+# The IP address that the server should listen on. This needs to be an IP
+# address on this machine, which may be a non-public address in the event that
+# GCNAT or NAT is being used.
+djbdns_bind_ip_address: 192.168.0.53
+
+djbdns_url: https://cr.yp.to/djbdns/djbdns-1.05.tar.gz
+djbdns_checksum: sha256:3ccd826a02f3cde39be088e1fc6aed9fd57756b8f970de5dc99fcd2d92536b48
+
+# The following will go into /etc/axfrdns/tcp. This example allows the first
+# IP address and any IP address starting with 10. to do zone transfers (of all
+# zones). The last line denies all others from doing zone transfers (which it
+# does by allowing TCP connections from everywhere, but making the list of
+# allowed domains to transfer be empty).
+# For more info see: https://cr.yp.to/djbdns/tcp.html
+djbdns_transfers: |
+  192.168.1.1:allow
+  10.:allow
+  :allow,AXFR=""
+
+# Format described in detail at https://cr.yp.to/djbdns/tinydns-data.html
+# Here's the short version:
+#   Zfqdn:primary_server:contact_email_with_a_dot = SOA for fqdn
+#   & = NS and A records
+#   @ = MX and A records
+#   + = A records
+#   C = CNAME records
+#   ' = TXT record
+djbdns_data: |
+  Z{{ ansible_domain }}:ns1.{{ ansible_domain }}:admin.{{ ansible_domain }}
+  &{{ ansible_domain }}:{{ djbdns_bind_ip_address }}:ns1.{{ ansible_domain }}
+  @{{ ansible_domain }}:{{ djbdns_bind_ip_address }}:mail.{{ ansible_domain }}
+  '{{ ansible_domain }}:v=spf1 mx -all
+  '_dmarc.{{ ansible_domain }}:v=DMARC1; p=none
+  A{{ ansible_domain }}:{{ djbdns_bind_ip_address }}
+  Cwww.{{ ansible_domain }}:{{ ansible_domain }}
