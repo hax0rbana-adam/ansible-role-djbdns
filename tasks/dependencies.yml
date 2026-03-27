@@ -4,3 +4,12 @@
       - daemontools
       - daemontools-run
       - ucspi-tcp
+  when: djbdns_source_install
+
+- name: Installing djbdns from your distro's repos
+  ansible.builtin.package:
+    name:
+      - tinydns
+      - axfrdns
+      - ucspi-tcp
+  when: not djbdns_source_install

@@ -8,17 +8,23 @@ See defaults/main.yml for the variables and an explanation as to what they do.
 # Examples
 ## Playbook
 Here's an example of a playbook to install djbdns on the local machine. It does
-not require you have SSH running.
+not require you have SSH running. This installs djbdns from apt repos, and thus
+uses runit instead of daemontools.
 
 ```yaml
 - hosts: localhost
   connection: local
   become: true
+  vars:
+    djbdns_bind_ip_address: 10.138.9.110
+    djbdns_source_install: false
+    djbdns_transfers: :allow,AXFR=""
   roles:
     - role: hax0rbana_adam.djbdns
 ```
 
-A more realistic playbook to run this role on a remote host:
+A more realistic playbook to run this role on a remote host is below. This one
+compiles djbdns from source and uses daemontools as a service manager.
 
 ```yaml
 - hosts: all

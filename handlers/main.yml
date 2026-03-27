@@ -2,7 +2,7 @@
   when: not xfer_db.stat.exists or xfer_conf.stat.mtime > xfer_db.stat.mtime
   ansible.builtin.command:
     cmd: make
-    chdir: /etc/axfrdns
+    chdir: "{{ djbdns_axfr_conf_dir }}"
   register: xfer_rebuild
   changed_when: '"is up to date." not in xfer_rebuild.stdout'
 
@@ -10,6 +10,6 @@
   when: not data_db.stat.exists or data_conf.stat.mtime > data_db.stat.mtime
   ansible.builtin.command:
     cmd: make
-    chdir: /etc/tinydns/root
+    chdir: "{{ djbdns_tinydns_conf_dir }}/root"
   register: data_rebuild
   changed_when: '"is up to date." not in data_rebuild.stdout'

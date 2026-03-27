@@ -53,13 +53,13 @@
 # https://cr.yp.to/djbdns/tinydns-conf.html
 - name: Configuring tinydns component of djbdns
   ansible.builtin.command:
-    cmd: tinydns-conf tinydns dnslog /etc/tinydns {{ djbdns_bind_ip_address }}
-    creates: /etc/tinydns/root/Makefile
+    cmd: tinydns-conf tinydns dnslog {{ djbdns_tinydns_conf_dir }} {{ djbdns_bind_ip_address }}
+    creates: "{{ djbdns_tinydns_conf_dir }}/root/Makefile"
 
 - name: Configuring axfrdns component of djbdns
   ansible.builtin.command:
-    cmd: axfrdns-conf axfrdns dnslog /etc/axfrdns /etc/tinydns {{ djbdns_bind_ip_address }}
-    creates: /etc/axfrdns/root/Makefile
+    cmd: axfrdns-conf axfrdns dnslog {{ djbdns_axfr_conf_dir }} {{ djbdns_bind_ip_address }}
+    creates: "{{ djbdns_axfr_conf_dir }}/root/Makefile"
 
 - name: Setting memory limits to 600KB
   ansible.builtin.replace:
@@ -67,4 +67,4 @@
     regexp: '-d[0-9]*'
     replace: '-d600000'
     mode: "755"
-  loop: ["/etc/axfrdns/run", "/etc/tinydns/run"]
+  loop: ["{{ djbdns_axfr_conf_dir }}/run", "{{ djbdns_tinydns_conf_dir }}/run"]

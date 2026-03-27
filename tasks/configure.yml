@@ -1,18 +1,36 @@
+- name: Ensuring we have a directory for environment variables
+  ansible.builtin.file:
+    path: "{{ djbdns_tinydns_conf_dir }}/env"
+    state: directory
+    mode: "644"
+
+- name: Setting ROOT environment variable
+  ansible.builtin.copy:
+    content: "{{ djbdns_tinydns_conf_dir }}/root"
+    dest: "{{ djbdns_tinydns_conf_dir }}/env/ROOT"
+    mode: "644"
+
+- name: Setting IP environment variable
+  ansible.builtin.copy:
+    content: "{{ djbdns_bind_ip_address }}"
+    dest: "{{ djbdns_tinydns_conf_dir }}/env/IP"
+    mode: "644"
+
 - name: Setting DNS zone transfer policies
   ansible.builtin.copy:
     content: "{{ djbdns_transfers }}"
-    dest: /etc/axfrdns/tcp
+    dest: "{{ djbdns_axfr_conf_dir }}/tcp"
     mode: "644"
   notify: Compile zone transfer rules into a hashed database
 
 - name: Checking to see when the last xfer database was hashed
   ansible.builtin.stat:
-    path: /etc/axfrdns/tcp.cdb
+    path: "{{ djbdns_axfr_conf_dir }}/tcp.cdb"
   register: xfer_db
 
 - name: Checking to see when the last xfer config was modified
   ansible.builtin.stat:
-    path: /etc/axfrdns/tcp
+    path: "{{ djbdns_axfr_conf_dir }}/tcp"
   register: xfer_conf
 
 # If we want to support secondary nameservers, where the primary can SSH into
@@ -26,16 +44,20 @@
 - name: Deploying DNS zone file
   ansible.builtin.copy:
     content: "{{ djbdns_data }}"
-    dest: /etc/tinydns/root/data
+    dest: "{{ djbdns_tinydns_conf_dir }}/root/data"
     mode: "644"
   notify: Compile zone file into a hashed database
+  when: djbdns_data | length > 0
 
 - name: Checking to see when the last xfer database was hashed
   ansible.builtin.stat:
-    path: /etc/tinydns/root/data.cdb
+    path: "{{ djbdns_tinydns_conf_dir }}/root/data.cdb"
   register: data_db
 
 - name: Checking to see when the last xfer config was modified
   ansible.builtin.stat:
-    path: /etc/tinydns/root/data
+    path: "{{ djbdns_tinydns_conf_dir }}/root/data"
   register: data_conf
+
+# The above two variables are used in the handler, which will recompile the zone
+# file if needed.

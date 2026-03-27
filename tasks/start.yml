@@ -4,7 +4,7 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
-    - src: /etc/tinydns
+    - src: "{{ djbdns_tinydns_conf_dir }}"
       dest: /etc/service/tinydns
-    - src: /etc/axfrdns
+    - src: "{{ djbdns_axfr_conf_dir }}"
       dest: /etc/service/axfrdns

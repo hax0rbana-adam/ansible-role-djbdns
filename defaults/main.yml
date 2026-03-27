@@ -3,13 +3,23 @@
 # GCNAT or NAT is being used.
 djbdns_bind_ip_address: 192.168.0.53
 
+# If you want to install from apt instead of source, switch this variable
+djbdns_source_install: true
+
+# The standard location for the tinydns zone file is /etc/tinydns (or /etc/sv/tinydns from apt)
+djbdns_tinydns_conf_dir: "{{ djbdns_source_install | ternary('/etc/tinydns', '/etc/sv/tinydns') }}"
+
+# And it's similar for the axfrdns config directory
+djbdns_axfr_conf_dir: "{{ djbdns_source_install | ternary('/etc/axfrdns', '/etc/sv/axfrdns') }}"
+
+# Location and checksum of source code (for source installs)
 djbdns_url: https://cr.yp.to/djbdns/djbdns-1.05.tar.gz
 djbdns_checksum: sha256:3ccd826a02f3cde39be088e1fc6aed9fd57756b8f970de5dc99fcd2d92536b48
 
 # The following will go into /etc/axfrdns/tcp. This example allows the first
 # IP address and any IP address starting with 10. to do zone transfers (of all
 # zones). The last line denies all others from doing zone transfers (which it
-# does by allowing TCP connections from everywhere, but making the list of
+# does by allowing TCP connections from everywhere by making the list of
 # allowed domains to transfer be empty).
 # For more info see: https://cr.yp.to/djbdns/tcp.html
 djbdns_transfers: |
