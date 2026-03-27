@@ -4,6 +4,7 @@
 - name: Checking to see if djbdns is already installed
   ansible.builtin.shell:
     cmd: which tinydns
+  changed_when: false
   register: executable
 
 - name: Compiling and installing djbdns (if necessary)

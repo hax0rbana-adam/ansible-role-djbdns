@@ -44,10 +44,25 @@
 - name: Deploying DNS zone file
   ansible.builtin.copy:
     content: "{{ djbdns_data }}"
-    dest: "{{ djbdns_tinydns_conf_dir }}/root/data"
+    dest: "{{ djbdns_tinydns_conf_dir }}/root/zone-primary"
     mode: "644"
   notify: Compile zone file into a hashed database
   when: djbdns_data | length > 0
+
+- name: Doing zone transfers
+  ansible.builtin.command:
+    chdir: "{{ djbdns_tinydns_conf_dir }}/root"
+    cmd: tcpclient {{ item.host }} {{ item.port | default('53') }} axfr-get {{ item.zone }} zone-{{ item.filename }} zone-{{ item.filename }}.tmp
+    creates: "{{ djbdns_tinydns_conf_dir }}/root/zone-{{ item.filename }}"
+  notify: Compile zone file into a hashed database
+  loop: "{{ djbdns_zone_xfers }}"
+
+- name: Combining zone transfers (if any) with zone file (if any)
+  ansible.builtin.shell:
+    chdir: "{{ djbdns_tinydns_conf_dir }}/root"
+    cmd: sort -u zone-* > data
+    creates: "{{ djbdns_tinydns_conf_dir }}/root/data"
+  when: djbdns_data | length > 0 or djbdns_zone_xfers | length > 0
 
 - name: Checking to see when the last xfer database was hashed
   ansible.builtin.stat:

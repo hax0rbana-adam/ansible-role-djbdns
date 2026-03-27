@@ -43,3 +43,18 @@ djbdns_data: |
   '_dmarc.{{ ansible_domain }}:v=DMARC1; p=none
   A{{ ansible_domain }}:{{ djbdns_bind_ip_address }}
   Cwww.{{ ansible_domain }}:{{ ansible_domain }}
+
+# If you want your initial setup to pull some data from other zones, you can
+# use the list below.
+djbdns_zone_xfers: [ ]
+# Example of transferring some zones from an upstream DNS server
+# djbdns_zone_xfers:
+#   - host: ns1.example.org
+#     zone: example.org
+#     filename: example-org
+#   - host: ns1.example.org
+#     zone: example.com
+#     filename: example-com
+# Note: the filename of "primary" is reserved for djbdns_data. If you use it as
+#       a filename in djbdns_zone_xfers, the xfer will overwrite the values
+#       from djbdns_data.
