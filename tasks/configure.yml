@@ -61,7 +61,6 @@
   ansible.builtin.shell:
     chdir: "{{ djbdns_tinydns_conf_dir }}/root"
     cmd: sort -u zone-* > data
-    creates: "{{ djbdns_tinydns_conf_dir }}/root/data"
   when: djbdns_data | length > 0 or djbdns_zone_xfers | length > 0
 
 - name: Checking to see when the last xfer database was hashed
