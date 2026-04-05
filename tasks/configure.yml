@@ -53,7 +53,6 @@
   ansible.builtin.command:
     chdir: "{{ djbdns_tinydns_conf_dir }}/root"
     cmd: tcpclient {{ item.host }} {{ item.port | default('53') }} axfr-get {{ item.zone }} zone-{{ item.filename }} zone-{{ item.filename }}.tmp
-    creates: "{{ djbdns_tinydns_conf_dir }}/root/zone-{{ item.filename }}"
   notify: Compile zone file into a hashed database
   loop: "{{ djbdns_zone_xfers }}"
 
