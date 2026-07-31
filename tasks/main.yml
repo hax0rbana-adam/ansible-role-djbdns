@@ -5,6 +5,7 @@
   ansible.builtin.shell:
     cmd: which tinydns
   changed_when: false
+  failed_when: false
   register: executable
 
 - name: Compiling and installing djbdns (if necessary)
