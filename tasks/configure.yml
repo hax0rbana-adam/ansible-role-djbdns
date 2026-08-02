@@ -74,3 +74,6 @@
 
 # The above two variables are used in the handler, which will recompile the zone
 # file if needed.
+
+- name: Flush handlers
+  meta: flush_handlers

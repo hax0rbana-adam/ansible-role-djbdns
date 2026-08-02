@@ -46,7 +46,7 @@ djbdns_data: |
 
 # If you want your initial setup to pull some data from other zones, you can
 # use the list below.
-djbdns_zone_xfers: [ ]
+djbdns_zone_xfers: []
 # Example of transferring some zones from an upstream DNS server
 # djbdns_zone_xfers:
 #   - host: ns1.example.org
